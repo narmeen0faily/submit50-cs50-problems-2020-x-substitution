@@ -1,66 +1,66 @@
-# submit50-cs50#include <cs50.h>
+#include <cs50.h>
 #include <stdio.h>
-#include <ctype.h>
 #include <string.h>
+#include <ctype.h>
+#include <math.h>
+#include <stdlib.h>
 
-// Caesar: c(ith) = (p(ith) + k) % 26
-
-// argc is an int that represents the number of arguments passed
-// argv is an array of string that represents the list of arguments passed
+// This program hides a message received from the user using an alternative alphabet
+// It takes a 26 digits string of unique letters and reassigns the alphabet using it as a key
 int main(int argc, string argv[])
-{    
-    
-    if (argv[1]) 
+{
+    // validates user input, it must exist and be a single string of 26 letters
+    if (argc != 2 || strlen(argv[1]) != 26)
     {
-        // The atoi function converts a string to an integer
-        int k = atoi(argv[1]);
-        
-        // Check if there was a second argument passed with the program call
-        // And that that second argument is higher than 0 (has to be to cypher with caesar)
-        if (argc == 2 && k > 0)
-        {
-            // Prompt user for text to cypher
-            string text = get_string("plaintext: ");
-            // Get length of the string
-            int length = strlen(text);
-            // Create an array of the same length for the ciphered characters
-            char res[length];
-            // Print "ciphertext: " now
-            printf("ciphertext: ");
-            for (int i = 0; i < length; i++) 
-            {
-                // Case: Char is Uppercase
-                // Ascii value of A = 65
-                if (isupper(text[i])) 
-                {
-                    res[i] = ((text[i] + k) - 65) % 26 + 65;
-                }
-                // Case: Char is Lowercase
-                // Ascii value of a = 97
-                else if (islower(text[i]))
-                {
-                    res[i] = ((text[i] + k) - 97) % 26 + 97;
-                }
-                // Case: not a letter of the alphabet 
-                else 
-                {
-                    res[i] = text[i];
-                }
-                // Print all the ciphered characters 
-                printf("%c", res[i]); 
-            }
-            printf("\n");
-            return 0;
-        } 
-        else 
-        {
-            printf("Usage: ./caesar key");
-            return 1;
-        }
-    } 
-    else
-    {
-        printf("Usage: ./caesar key");
+        printf("Usage: ./substitution key\n");
         return 1;
     }
-}-problems-2020-x-substitution
+
+    char newAlphabet[26];
+    char key[26];
+
+    // assigns the new values to the array newAlphabet and validates the key
+    for (int i = 0; i < 26; i++)
+    {
+        key[i] = toupper(argv[1][i]);
+        if (key[i] >= 65 && key[i] <= 90)
+        {
+            newAlphabet[i] = 65 + i - key[i];
+        }
+        // Returns an error if the key has non alphabetical characters
+        else
+        {
+            printf("Usage: ./substitution key\n");
+            return 1;
+        }
+
+        // This loop checks if the current letter of the key is a duplicate
+        for (int j = 0; j < i; j++)
+        {
+            if (key[i] == key[j])
+            {
+                printf("Usage: ./substitution key\n");
+                return 1;
+            }
+        }
+    }
+
+    string text = get_string("plaintext: ");
+
+    // converts the message using the new alphabet
+    for (int i = 0, n = strlen(text); i < n; i++)
+    {
+        if (text[i] >= 65 && text[i] <= 90)
+        {
+            text[i] = text[i] - newAlphabet[text[i] - 65];
+        }
+        else if (text[i] >= 97 && text[i] <= 122)
+        {
+            text[i] = text[i] - newAlphabet[text[i] - 97];
+        }
+    }
+
+    // prints out encrypted message
+    printf("ciphertext: %s\n", text);
+    return 0;
+}
